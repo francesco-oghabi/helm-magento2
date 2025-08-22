@@ -146,9 +146,9 @@ magento:
     - name: magento-data
       mountPath: /var/www/html/var
       subPath: var
-    - name: magento-data
-      mountPath: /var/www/html/pub/static/_cache
-      subPath: static-cache
+#    - name: magento-data
+#      mountPath: /var/www/html/pub/static/_cache
+#      subPath: static-cache
 
 
   extraInitContainer:
@@ -282,9 +282,9 @@ cronjob:
     - name: magento-data
       mountPath: /var/www/html/var
       subPath: var
-    - name: magento-data
-      mountPath: /var/www/html/pub/static/_cache
-      subPath: static-cache
+#    - name: magento-data
+#      mountPath: /var/www/html/pub/static/_cache
+#      subPath: static-cache
 
   command: "'sh', '-c', 'exec /usr/bin/supervisord --nodaemon --configuration /etc/supervisord-cronjob.conf'"
 

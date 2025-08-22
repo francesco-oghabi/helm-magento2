@@ -22,7 +22,7 @@ cronjob:
     - name: MAGENTO_CLOUD_ROUTES
       value: eyJodHRwOlwvXC9tYWdlbnRvLWRlbW8ub2doYWJpLml0XC8iOnsidHlwZSI6InVwc3RyZWFtIiwib3JpZ2luYWxfdXJsIjoiaHR0cDpcL1wve2RlZmF1bHR9XC8ifX0=
     - name: MAGENTO_CLOUD_RELATIONSHIPS
-      value:  eyJkYXRhYmFzZSI6W3siaG9zdCI6Im15c3FsIiwicGF0aCI6Im1hZ2VudG8iLCJwYXNzd29yZCI6InRvcFNlY3JldCIsInVzZXJuYW1lIjoibWFnZW50byIsInBvcnQiOiIzMzA2In1dLCJyZWRpcyI6W3siaG9zdCI6InJlZGlzLWhlYWRsZXNzIiwgInBvcnQiOiAiNjM3OSJ9XSwib3BlbnNlYXJjaCI6W3siaG9zdCI6ImVsYXN0aWNzZWFyY2giLCAicG9ydCI6ICI5MjAwIiwgInNjaGVtZSI6Imh0dHAifV0sInJhYmJpdG1xIjpbeyJob3N0IjoicmFiYml0bXEiLCAidXNlcm5hbWUiOiJwaG9lbml4IiwgInBhc3N3b3JkIjoiTWFnZW50bzEyMyIsICJzY2hlbWUiOiJhbXFwIiwgInBvcnQiOiAiNTY3MiJ9XX0=
+      value: eyJkYXRhYmFzZSI6W3siaG9zdCI6Im15c3FsIiwicGF0aCI6Im1hZ2VudG8iLCJwYXNzd29yZCI6InRvcFNlY3JldCIsInVzZXJuYW1lIjoibWFnZW50byIsInBvcnQiOiIzMzA2In1dLCJyZWRpcyI6W3siaG9zdCI6InJlZGlzLWhlYWRsZXNzIiwgInBvcnQiOiAiNjM3OSJ9XSwib3BlbnNlYXJjaCI6W3siaG9zdCI6ImVsYXN0aWNzZWFyY2giLCAicG9ydCI6ICI5MjAwIiwgInNjaGVtZSI6Imh0dHAifV0sInJhYmJpdG1xIjpbeyJob3N0IjoicmFiYml0bXEiLCAidXNlcm5hbWUiOiJwaG9lbml4IiwgInBhc3N3b3JkIjoiTWFnZW50bzEyMyIsICJzY2hlbWUiOiJhbXFwIiwgInBvcnQiOiAiNTY3MiJ9XX0=
     - name: MAGENTO_CLOUD_VARIABLES
       value: eyJBRE1JTl9GSVJTVE5BTUUiOiJZb3VyIEZpcnN0bmFtZSIsIkFETUlOX0xBU1ROQU1FIjoiWW91ciBMYXN0bmFtZSIsIkFETUlOX0VNQUlMIjoiYWNjb3VudEBtYWlsLmNvbSIsIkFETUlOX1VTRVJOQU1FIjoiYWRtaW5pc3RyYXRvciIsIkFETUlOX1BBU1NXT1JEIjoidG9wQFNlY3JlMSIsIkFETUlOX1VSTCI6ImFkbWluIiwiQ1JZUFRfS0VZIjoiNmZnMzdqYzUyOWUwZDlmMDY5NjY1Y2JjOWZlMTcwYjIifQ==
     - name: RELAYHOST
@@ -48,10 +48,10 @@ cronjob:
       command: [ 'sh', '-c', 'while ! nc -z -v -w5 elasticsearch 9200 2>&1| grep -q open; do echo \"waiting for elasticsearch\"; sleep 1s; done' ]
     - name: volume-mount-hack
       image: busybox
-      command: ["sh", "-c", "chmod -R a+rwx /var/www/html"]
+      command: [ "sh", "-c", "chmod -R a+rwx /var/www/html" ]
       volumeMounts:
-      - name: magento-data
-        mountPath: /var/www/html
+        - name: magento-data
+          mountPath: /var/www/html
 
 elasticsearch:
   esJavaOpts: "-Xmx256m -Xms256m"
@@ -65,20 +65,20 @@ elasticsearch:
 persistence:
   enabled: true
   name: magento-data
-  annotations: {}
-  labels: {}
+  annotations: { }
+  labels: { }
   # existingClaim:
   accessMode: ReadWriteMany
   size: 10Gi
-  storageClassName: "longhorn"
+  storageClassName: null
   #storageClassName: "files"
 
 service:
   type: ClusterIP
-  port: 8080
+  port: 80
 
 serviceHeadless:
-  port: 8080
+  port: 80
 
 varnish:
   securityContext:
@@ -105,7 +105,7 @@ varnish:
       }
 
       backend default {
-          .host = "localhost";
+          .host = "magento";
           .port = "80";
           .probe = magento_probe;
       }
@@ -184,7 +184,7 @@ varnish:
           if (req.url ~ "/customer" || req.url ~ "/checkout") {
               return (pass);
           }
-    
+      
           # use xdebug backend
       #    if (req.http.cookie ~ "XDEBUG_SESSION=" && std.ip(req.http.X-Real-IP, "0.0.0.0") ~ xdebug-users) {
       #        set req.backend_hint = magento_director.backend("xdebug");
@@ -387,34 +387,23 @@ varnish:
           }
       }
 
+
 ingress:
   enabled: true
+  ingressClassName: nginx
+  certManager: false
   hosts:
-# Uncomment this section and update with your values
     - name: magento-demo.oghabi.it
       paths:
-      - path: "/"
-        serviceName: varnish
-        servicePort: 8080
+        - path: "/"
+          serviceName: varnish
+          servicePort: 8080
 
-# extra K8s manifests to deploy
-extraObjects: []
-# Uncomment and edit section if you want to generate ssl certificate for your domain
-#extraObjects:
-#  - apiVersion: networking.gke.io/v1
-#    kind: ManagedCertificate
-#    metadata:
-#      name: managed-cert
-#    spec:
-#      domains:
-#        - <your-domain>
 secrets:
   enabled: true
-
   name: general-secrets
-
-  annotations: {}
-  labels: {}
+  annotations: { }
+  labels: { }
 
   credentials:
     data:
