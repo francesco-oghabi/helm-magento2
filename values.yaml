@@ -286,7 +286,7 @@ cronjob:
 #      mountPath: /var/www/html/pub/static/_cache
 #      subPath: static-cache
 
-  command: "'sh', '-c', 'exec /usr/bin/supervisord --nodaemon --configuration /etc/supervisord-cronjob.conf'"
+  command: "'sh', '-c', 'cd /var/tmp && exec /usr/bin/supervisord --nodaemon --configuration /etc/supervisord/supervisord-cronjob.conf'"
 
   extraInitContainer:
     - name: check-redis
@@ -397,7 +397,7 @@ opensearch:
 
 
 varnish:
-  enabled: true
+  enabled: false
   nameOverride: "varnish"
   fullnameOverride: "varnish"
   image:

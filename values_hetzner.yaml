@@ -81,6 +81,7 @@ serviceHeadless:
   port: 80
 
 varnish:
+  enable: false
   securityContext:
     runAsUser: 0
   service:
@@ -396,8 +397,8 @@ ingress:
     - name: magento-demo.oghabi.it
       paths:
         - path: "/"
-          serviceName: varnish
-          servicePort: 8080
+          serviceName: magento
+          servicePort: 80
 
 secrets:
   enabled: true
