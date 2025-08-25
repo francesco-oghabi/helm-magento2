@@ -397,7 +397,7 @@ opensearch:
 
 
 varnish:
-  enabled: false
+  enabled: true
   nameOverride: "varnish"
   fullnameOverride: "varnish"
   image:
@@ -890,16 +890,25 @@ ingress:
   useProxyProtocol: true
   annotations:
     letsencrypt: false
+    proxyBufferSize: '32k'
+    proxyBuffering: 'on'
+    proxyBuffersNumber: '16'
+    proxyConnectTimeout: '600'
+    proxyReadTimeout: '600'
+    proxySendTimeout: '600'
+    sslRedirect: "true"
+    proxyBodySize: 32m
+    extraRaw: |-
+    nginx.ingress.kubernetes.io/proxy-buffer-size: '32k'
+    nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+    nginx.ingress.kubernetes.io/proxy-buffers-number: '16'
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: '600'
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '600'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '600'
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 32m
+
     #    extraRaw: |-
-    #      nginx.ingress.kubernetes.io/proxy-body-size: "1m"
-    #      nginx.ingress.kubernetes.io/proxy-buffer-size: '32k'
-    #      nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-    #      nginx.ingress.kubernetes.io/proxy-buffers-number: '16'
-    #      nginx.ingress.kubernetes.io/proxy-connect-timeout: '600'
-    #      nginx.ingress.kubernetes.io/proxy-read-timeout: '600'
-    #      nginx.ingress.kubernetes.io/proxy-send-timeout: '600'
-    #      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    #      nginx.ingress.kubernetes.io/proxy-body-size: 32m
     #      nginx.ingress.kubernetes.io/whitelist-source-range: |-
     #        10.0.0.0/24
     #        172.10.0.1

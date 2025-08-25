@@ -16,6 +16,14 @@ metadata:
     {{- if .Values.ingress.useProxyProtocol }}
     use-proxy-protocol: "true"
     {{- end }}
+    nginx.ingress.kubernetes.io/proxy-buffer-size: {{ .Values.ingress.annotations.proxyBufferSize | quote }}
+    nginx.ingress.kubernetes.io/proxy-buffering: {{ .Values.ingress.annotations.proxyBuffering | quote }}
+    nginx.ingress.kubernetes.io/proxy-buffers-number: {{ .Values.ingress.annotations.proxyBuffersNumber | quote }}
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: {{ .Values.ingress.annotations.proxyConnectTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: {{ .Values.ingress.annotations.proxyReadTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-send-timeout: {{ .Values.ingress.annotations.proxySendTimeout | quote }}
+    nginx.ingress.kubernetes.io/ssl-redirect: {{ .Values.ingress.annotations.sslRedirect | quote }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.ingress.annotations.proxyBodySize | quote }}
     {{- if .Values.ingress.annotations.extraRaw }}
     {{ .Values.ingress.annotations.extraRaw | nindent 4 }}
     {{- end }}
