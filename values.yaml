@@ -884,7 +884,7 @@ serviceHeadless:
 ##
 ingress:
   ## Set to true to enable ingress record generation
-  enabled: false
+  enabled: true
   # ingressClassName: nginx
   certManager: false
   useProxyProtocol: true
