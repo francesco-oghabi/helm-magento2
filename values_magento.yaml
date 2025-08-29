@@ -392,7 +392,9 @@ varnish:
 ingress:
   enabled: true
   ingressClassName: nginx
-  certManager: false
+  certManager: true
+  annotations:
+    tls: true
   hosts:
     - name: magento-demo.oghabi.it
       paths:
@@ -414,3 +416,5 @@ secrets:
       MAGENTO_CLOUD_VARIABLES: eyJBRE1JTl9GSVJTVE5BTUUiOiJZb3VyIEZpcnN0bmFtZSIsIkFETUlOX0xBU1ROQU1FIjoiWW91ciBMYXN0bmFtZSIsIkFETUlOX0VNQUlMIjoiYWNjb3VudEBtYWlsLmNvbSIsIkFETUlOX1VTRVJOQU1FIjoiYWRtaW5pc3RyYXRvciIsIkFETUlOX1BBU1NXT1JEIjoidG9wQFNlY3JlMSIsIkFETUlOX1VSTCI6ImFkbWluIiwiQ1JZUFRfS0VZIjoiNmZnMzdqYzUyOWUwZDlmMDY5NjY1Y2JjOWZlMTcwYjIifQ==
       RELAYHOST: my.relayhost.com
 
+cert-manager:
+  namespace: magento

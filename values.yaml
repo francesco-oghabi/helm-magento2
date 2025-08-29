@@ -1,12 +1,11 @@
 ## Global Helm parameters
-
 global:
   imageRegistry: ""
   ## E.g.
   ## imagePullSecrets:
   ##   - myRegistryKeySecretName
   ##
-  imagePullSecrets: []
+  imagePullSecrets: [ ]
 
 
 image:
@@ -50,12 +49,12 @@ magento:
           key: SMTP_USE_TLS
           optional: true
 
-  annotations: {}
-  labels: {}
-  podAnnotations: {}
-  resources: {}
-  lifecycle: {}
-  affinity: {}
+  annotations: { }
+  labels: { }
+  podAnnotations: { }
+  resources: { }
+  lifecycle: { }
+  affinity: { }
   strategy:
     rollingUpdate:
       maxSurge: 100%
@@ -95,10 +94,10 @@ magento:
             type: Utilization
             averageUtilization: 80
 
-  podSecurityContext: {}
-  securityContext: {}
-  tolerations: []
-  sidecars: []
+  podSecurityContext: { }
+  securityContext: { }
+  tolerations: [ ]
+  sidecars: [ ]
   volumes:
     - name: magento-data
       persistentVolumeClaim:
@@ -146,32 +145,32 @@ magento:
     - name: magento-data
       mountPath: /var/www/html/var
       subPath: var
-#    - name: magento-data
-#      mountPath: /var/www/html/pub/static/_cache
-#      subPath: static-cache
+  #    - name: magento-data
+  #      mountPath: /var/www/html/pub/static/_cache
+  #      subPath: static-cache
 
 
   extraInitContainer:
     - name: check-redis
       image: busybox
       imagePullPolicy: IfNotPresent
-      command: ['sh', '-c', 'while ! nc -z -v -w5 redis-headless 6379 2>&1| grep -q open; do echo \"waiting for redis\"; sleep 1s; done']
+      command: [ 'sh', '-c', 'while ! nc -z -v -w5 redis-headless 6379 2>&1| grep -q open; do echo \"waiting for redis\"; sleep 1s; done' ]
     - name: check-rabbitmq
       image: busybox
       imagePullPolicy: IfNotPresent
-      command: ['sh', '-c', 'while ! nc -z -v -w5 rabbitmq-headless 5672 2>&1| grep -q open; do echo \"waiting for rabbitmq\"; sleep 1s; done']
+      command: [ 'sh', '-c', 'while ! nc -z -v -w5 rabbitmq-headless 5672 2>&1| grep -q open; do echo \"waiting for rabbitmq\"; sleep 1s; done' ]
     - name: check-mysql
       image: busybox
       imagePullPolicy: IfNotPresent
-      command: ['sh', '-c', 'while ! nc -z -v -w5 mysql 3306 2>&1| grep -q open; do echo \"waiting for mysql\"; sleep 1s; done']
+      command: [ 'sh', '-c', 'while ! nc -z -v -w5 mysql 3306 2>&1| grep -q open; do echo \"waiting for mysql\"; sleep 1s; done' ]
     - name: check-elasticsearch
       image: busybox
       imagePullPolicy: IfNotPresent
-      command: ['sh', '-c', 'while ! nc -z -v -w5 elasticsearch 9200 2>&1| grep -q open; do echo \"waiting for elasticsearch\"; sleep 1s; done']
+      command: [ 'sh', '-c', 'while ! nc -z -v -w5 elasticsearch 9200 2>&1| grep -q open; do echo \"waiting for elasticsearch\"; sleep 1s; done' ]
     - name: check-magento-install
       image: busybox
       imagePullPolicy: IfNotPresent
-      command: ['sh', '-c', 'while [ ! -f /tmp/shared/var/.magento-installed ]; do echo \"waiting for Magento installation process to finish\"; sleep 1s; done']
+      command: [ 'sh', '-c', 'while [ ! -f /tmp/shared/var/.magento-installed ]; do echo \"waiting for Magento installation process to finish\"; sleep 1s; done' ]
       volumeMounts:
         - name: magento-data
           mountPath: /tmp/shared
@@ -179,24 +178,6 @@ magento:
 #  terminationGracePeriodSeconds: 30
 
 
-########## XDEBUG ##########
-xdebug:
-  enabled: false
-  reuseMagentoEnvs: true
-  env:
-    - name: XDEBUG_INSTALL
-      value: "true"
-    - name: XDEBUG_REMOTE_HOST
-      value: "dbgp-proxy"
-  annotations: {}
-  labels: {}
-  podAnnotations: {}
-  resources: {}
-  podSecurityContext: {}
-  securityContext: {}
-  tolerations: []
-  affinity: {}
-  sidecars: []
 
 
 ########## CRONJOB ##########
@@ -245,11 +226,11 @@ cronjob:
           key: COMPOSER_AUTH
           optional: true
 
-  annotations: {}
-  labels: {}
-  podAnnotations: {}
-  resources: {}
-  sidecars: []
+  annotations: { }
+  labels: { }
+  podAnnotations: { }
+  resources: { }
+  sidecars: [ ]
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -266,10 +247,10 @@ cronjob:
     timeoutSeconds: 3
     failureThreshold: 20
 
-  podSecurityContext: {}
-  securityContext: {}
-  affinity: {}
-  tolerations: []
+  podSecurityContext: { }
+  securityContext: { }
+  affinity: { }
+  tolerations: [ ]
   volumes:
     - name: magento-data
       persistentVolumeClaim:
@@ -282,9 +263,9 @@ cronjob:
     - name: magento-data
       mountPath: /var/www/html/var
       subPath: var
-#    - name: magento-data
-#      mountPath: /var/www/html/pub/static/_cache
-#      subPath: static-cache
+  #    - name: magento-data
+  #      mountPath: /var/www/html/pub/static/_cache
+  #      subPath: static-cache
 
   command: "'sh', '-c', 'cd /var/tmp && exec /usr/bin/supervisord --nodaemon --configuration /etc/supervisord/supervisord-cronjob.conf'"
 
@@ -292,25 +273,25 @@ cronjob:
     - name: check-redis
       image: busybox
       imagePullPolicy: IfNotPresent
-      command: ['sh', '-c', 'while ! nc -z -v -w5 redis-headless 6379 2>&1| grep -q open; do echo \"waiting for redis\"; sleep 1s; done']
+      command: [ 'sh', '-c', 'while ! nc -z -v -w5 redis-headless 6379 2>&1| grep -q open; do echo \"waiting for redis\"; sleep 1s; done' ]
     - name: check-rabbitmq
       image: busybox
       imagePullPolicy: IfNotPresent
-      command: ['sh', '-c', 'while ! nc -z -v -w5 rabbitmq-headless 5672 2>&1| grep -q open; do echo \"waiting for rabbitmq\"; sleep 1s; done']
+      command: [ 'sh', '-c', 'while ! nc -z -v -w5 rabbitmq-headless 5672 2>&1| grep -q open; do echo \"waiting for rabbitmq\"; sleep 1s; done' ]
     - name: check-mysql
       image: busybox
       imagePullPolicy: IfNotPresent
-      command: ['sh', '-c', 'while ! nc -z -v -w5 mysql 3306 2>&1| grep -q open; do echo \"waiting for mysql\"; sleep 1s; done']
+      command: [ 'sh', '-c', 'while ! nc -z -v -w5 mysql 3306 2>&1| grep -q open; do echo \"waiting for mysql\"; sleep 1s; done' ]
     - name: check-elasticsearch
       image: busybox
       imagePullPolicy: IfNotPresent
-      command: ['sh', '-c', 'while ! nc -z -v -w5 elasticsearch 9200 2>&1| grep -q open; do echo \"waiting for elasticsearch\"; sleep 1s; done']
+      command: [ 'sh', '-c', 'while ! nc -z -v -w5 elasticsearch 9200 2>&1| grep -q open; do echo \"waiting for elasticsearch\"; sleep 1s; done' ]
 
   terminationGracePeriodSeconds: 600
   lifecycle:
     preStop:
       exec:
-        command: ["sh", "-c", "rm -rf /etc/crontabs/nginx; while [ $(ps aux | grep php| wc -l) -gt 2 ]; do echo 'php scripts running'; sleep 1s; done"]
+        command: [ "sh", "-c", "rm -rf /etc/crontabs/nginx; while [ $(ps aux | grep php| wc -l) -gt 2 ]; do echo 'php scripts running'; sleep 1s; done" ]
 
 
 ########## MYSQL ##########
@@ -330,10 +311,10 @@ mariadb:
     existingSecret: general-secrets
 
   master:
-    podLabels: {}
+    podLabels: { }
     persistence:
       size: 10Gi
-    resources: {}
+    resources: { }
   slave:
     replicas: 0
 
@@ -349,8 +330,8 @@ redis:
   usePassword: false
   architecture: standalone
   master:
-    resources: {}
-    disableCommands: []
+    resources: { }
+    disableCommands: [ ]
 
 
 elasticsearch:
@@ -420,7 +401,7 @@ varnish:
 
   extraVolumes:
     - name: disk-cache
-      emptyDir: {}
+      emptyDir: { }
 
   extraVolumeMounts:
     - name: disk-cache
@@ -847,8 +828,8 @@ imgproxy:
 persistence:
   enabled: true
   name: magento-data
-  annotations: {}
-  labels: {}
+  annotations: { }
+  labels: { }
   # existingClaim:
   accessMode: ReadWriteMany
   size: 10Gi
@@ -861,11 +842,11 @@ persistence:
 service:
   type: ClusterIP
   port: 80
-  annotations: {}
-  labels: {}
+  annotations: { }
+  labels: { }
   sessionAffinity: "None"
   clusterIP: ""
-  loadBalancerSourceRanges: []
+  loadBalancerSourceRanges: [ ]
   loadBalancerIP: ""
   nodePorts:
     http: ""
@@ -875,8 +856,8 @@ service:
 serviceHeadless:
   enabled: true
   port: 80
-  annotations: {}
-  labels: {}
+  annotations: { }
+  labels: { }
 
 ## Configure the ingress resource that allows you to access the
 ## Magento installation. Set up the URL
@@ -886,10 +867,14 @@ ingress:
   ## Set to true to enable ingress record generation
   enabled: true
   # ingressClassName: nginx
-  certManager: false
+  certManager: true
   useProxyProtocol: true
+  tls:
+    - hosts:
+        - magento-demo.oghabi.it
+      secretName: magento-tls
   annotations:
-    letsencrypt: false
+    letsencrypt: true
     proxyBufferSize: '32k'
     proxyBuffering: 'on'
     proxyBuffersNumber: '16'
@@ -907,6 +892,9 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-send-timeout: '600'
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: 32m
+    tls: true
+    tlsSecret: magento-tls-secret
+
 
     #    extraRaw: |-
     #      nginx.ingress.kubernetes.io/whitelist-source-range: |-
@@ -945,8 +933,8 @@ secrets:
 
   name: general-secrets
 
-  annotations: {}
-  labels: {}
+  annotations: { }
+  labels: { }
 
   credentials:
     data:
@@ -957,16 +945,16 @@ secrets:
       RELAYHOST: my.relayhost.com
       SMTP_USE_TLS: "false"
 
-  #    ADD_SAMPLE_DATA: "true"
-  #    COMPOSER_AUTH: |-
-  #            {
-  #              "http-basic": {
-  #                "repo.magento.com": {
-  #                  "username": "<user>",
-  #                  "password": "<password>"
-  #                }
-  #              }
-  #            }
+      #    ADD_SAMPLE_DATA: "true"
+      #    COMPOSER_AUTH: |-
+      #            {
+      #              "http-basic": {
+      #                "repo.magento.com": {
+      #                  "username": "<user>",
+      #                  "password": "<password>"
+      #                }
+      #              }
+      #            }
 
       mariadb-password: topSecret
       mariadb-replication-password: topSecret
@@ -977,41 +965,41 @@ secrets:
       rabbitmq-password: Magento123
 
       # External Secrets Operator template examples
-#        MAGENTO_CLOUD_RELATIONSHIPS: >-
-#          {{- $relationships := dict
-#            "database" (list (dict "host" "mysql" "path" .mysql_database "password" .mysql_password "username" .mysql_user "port" "3306"))
-#            "redis" (list (dict "host" "redis-master" "port" "6379"))
-#            "elasticsearch" (list (dict "host" "elasticsearch" "scheme" "http" "port" "9200"))
-#            "rabbitmq" (list (dict "password" .rabbitmq_password "scheme" "amqp" "port" "5672" "host" "rabbitmq" "username" .rabbitmq_username))
-#          -}}
-#          {{- $relationships | toJson | b64enc }}
-#        MAGENTO_CLOUD_VARIABLES: >-
-#          {{- $variables := dict
-#            "ADMIN_FIRSTNAME" "Your Firstname"
-#            "ADMIN_LASTNAME" "Your Lastname"
-#            "ADMIN_EMAIL" "account@mail.com"
-#            "ADMIN_USERNAME" .magento_admin_username
-#            "ADMIN_PASSWORD" .magento_admin_password
-#            "ADMIN_URL" "admin"
-#            "CRYPT_KEY" .magento_crypt_key
-#          -}}
-#          {{- $variables | toJson | b64enc }}
-#      RELAYHOST: 'my.relayhost.com'
-#      SMTP_USE_TLS: 'true'
-#      auth: '{{ htpasswd .basic_auth_username .basic_auth_password }}'
+    #        MAGENTO_CLOUD_RELATIONSHIPS: >-
+    #          {{- $relationships := dict
+    #            "database" (list (dict "host" "mysql" "path" .mysql_database "password" .mysql_password "username" .mysql_user "port" "3306"))
+    #            "redis" (list (dict "host" "redis-master" "port" "6379"))
+    #            "elasticsearch" (list (dict "host" "elasticsearch" "scheme" "http" "port" "9200"))
+    #            "rabbitmq" (list (dict "password" .rabbitmq_password "scheme" "amqp" "port" "5672" "host" "rabbitmq" "username" .rabbitmq_username))
+    #          -}}
+    #          {{- $relationships | toJson | b64enc }}
+    #        MAGENTO_CLOUD_VARIABLES: >-
+    #          {{- $variables := dict
+    #            "ADMIN_FIRSTNAME" "Your Firstname"
+    #            "ADMIN_LASTNAME" "Your Lastname"
+    #            "ADMIN_EMAIL" "account@mail.com"
+    #            "ADMIN_USERNAME" .magento_admin_username
+    #            "ADMIN_PASSWORD" .magento_admin_password
+    #            "ADMIN_URL" "admin"
+    #            "CRYPT_KEY" .magento_crypt_key
+    #          -}}
+    #          {{- $variables | toJson | b64enc }}
+    #      RELAYHOST: 'my.relayhost.com'
+    #      SMTP_USE_TLS: 'true'
+    #      auth: '{{ htpasswd .basic_auth_username .basic_auth_password }}'
 
-#      MYSQL_DATABASE: '{{ .mysql_database }}'
-#      MYSQL_PASSWORD: '{{ .mysql_password }}'
-#      MYSQL_ROOT_PASSWORD: '{{ .mysql_root_password }}'
-#      MYSQL_USER: '{{ .mysql_user }}'
+    #      MYSQL_DATABASE: '{{ .mysql_database }}'
+    #      MYSQL_PASSWORD: '{{ .mysql_password }}'
+    #      MYSQL_ROOT_PASSWORD: '{{ .mysql_root_password }}'
+    #      MYSQL_USER: '{{ .mysql_user }}'
 
-#      mariadb-password: '{{ .mysql_password }}'
-#      mariadb-replication-password: '{{ .mysql_password }}'
-#      mariadb-root-password: '{{ .mysql_root_password }}'
+    #      mariadb-password: '{{ .mysql_password }}'
+    #      mariadb-replication-password: '{{ .mysql_password }}'
+    #      mariadb-root-password: '{{ .mysql_root_password }}'
 
-#      rabbitmq_user: '{{ .rabbitmq_username }}'
-#      rabbitmq-erlang-cookie: '{{ .rabbitmq_erlang_cookie }}'
-#      rabbitmq-password: '{{ .rabbitmq_password }}'
+    #      rabbitmq_user: '{{ .rabbitmq_username }}'
+    #      rabbitmq-erlang-cookie: '{{ .rabbitmq_erlang_cookie }}'
+    #      rabbitmq-password: '{{ .rabbitmq_password }}'
 
     stringData:
 
@@ -1023,92 +1011,103 @@ secrets:
     # see https://external-secrets.io/v0.8.1/api/secretstore/
     store:
       name: vault
-      annotations: {}
-      labels: {}
+      annotations: { }
+      labels: { }
       credentials:
         data:
-#          secret-id: "<app-secret-id>"
+        #          secret-id: "<app-secret-id>"
         stringData:
 
       controller: ""
-      retrySettings: {}
+      retrySettings: { }
 
 
-      provider: {}
-         # example for Hashicorp Vault (see https://external-secrets.io/v0.8.1/provider/hashicorp-vault/)
-#        vault:
-#          server: "https://your-vault.com"
-#          path: "customer"
-#          auth:
-#            appRole:
-#              path: "approle"
-#              roleId: "<app-role-name>"
-#              secretRef:
-#                name: external-secrets-store
-#                key: secret-id
+      provider: { }
+      # example for Hashicorp Vault (see https://external-secrets.io/v0.8.1/provider/hashicorp-vault/)
+    #        vault:
+    #          server: "https://your-vault.com"
+    #          path: "customer"
+    #          auth:
+    #            appRole:
+    #              path: "approle"
+    #              roleId: "<app-role-name>"
+    #              secretRef:
+    #                name: external-secrets-store
+    #                key: secret-id
 
     # see https://external-secrets.io/v0.8.1/api/externalsecret/
     secrets:
       name: vault-secrets
-      labels: {}
-      annotations: {}
+      labels: { }
+      annotations: { }
       refreshInterval: "1m"
 
       data:
-#        - secretKey: magento_admin_username
-#          remoteRef:
-#            key: magento/dev/magento-admin
-#            property: username
-#        - secretKey: magento_admin_password
-#          remoteRef:
-#            key: magento/dev/magento-admin
-#            property: password
-#        - secretKey: magento_crypt_key
-#          remoteRef:
-#            key: magento/dev/magento-admin
-#            property: crypt_key
-#        - secretKey: basic_auth_username
-#          remoteRef:
-#            key: magento/dev/magento-admin
-#            property: basic-auth-username
-#        - secretKey: basic_auth_password
-#          remoteRef:
-#            key: magento/dev/magento-admin
-#            property: basic-auth-password
+      #        - secretKey: magento_admin_username
+      #          remoteRef:
+      #            key: magento/dev/magento-admin
+      #            property: username
+      #        - secretKey: magento_admin_password
+      #          remoteRef:
+      #            key: magento/dev/magento-admin
+      #            property: password
+      #        - secretKey: magento_crypt_key
+      #          remoteRef:
+      #            key: magento/dev/magento-admin
+      #            property: crypt_key
+      #        - secretKey: basic_auth_username
+      #          remoteRef:
+      #            key: magento/dev/magento-admin
+      #            property: basic-auth-username
+      #        - secretKey: basic_auth_password
+      #          remoteRef:
+      #            key: magento/dev/magento-admin
+      #            property: basic-auth-password
 
-#        - secretKey: mysql_database
-#          remoteRef:
-#            key: magento/dev/mysql
-#            property: database
-#        - secretKey: mysql_password
-#          remoteRef:
-#            key: magento/dev/mysql
-#            property: password
-#        - secretKey: mysql_user
-#          remoteRef:
-#            key: magento/dev/mysql
-#            property: username
-#        - secretKey: mysql_root_password
-#          remoteRef:
-#            key: magento/dev/mysql
-#            property: root_password
+      #        - secretKey: mysql_database
+      #          remoteRef:
+      #            key: magento/dev/mysql
+      #            property: database
+      #        - secretKey: mysql_password
+      #          remoteRef:
+      #            key: magento/dev/mysql
+      #            property: password
+      #        - secretKey: mysql_user
+      #          remoteRef:
+      #            key: magento/dev/mysql
+      #            property: username
+      #        - secretKey: mysql_root_password
+      #          remoteRef:
+      #            key: magento/dev/mysql
+      #            property: root_password
 
-#        - secretKey: rabbitmq_username
-#          remoteRef:
-#            key: magento/dev/rabbitmq
-#            property: username
-#        - secretKey: rabbitmq_password
-#          remoteRef:
-#            key: magento/dev/rabbitmq
-#            property: password
-#        - secretKey: rabbitmq_erlang_cookie
-#          remoteRef:
-#            key: magento/dev/rabbitmq
-#            property: erlang-cookie
+      #        - secretKey: rabbitmq_username
+      #          remoteRef:
+      #            key: magento/dev/rabbitmq
+      #            property: username
+      #        - secretKey: rabbitmq_password
+      #          remoteRef:
+      #            key: magento/dev/rabbitmq
+      #            property: password
+      #        - secretKey: rabbitmq_erlang_cookie
+      #          remoteRef:
+      #            key: magento/dev/rabbitmq
+      #            property: erlang-cookie
 
       target:
         creationPolicy: Owner
         deletionPolicy: Retain
 
 # extra K8s manifests to deploy
-extraObjects: []
+extraObjects: [ ]
+
+# Cert Manager
+cert-manager:
+  enabled: true
+  installCRDs: true
+
+
+issuer:
+  enabled: true
+  email: francesco@oghabi.it
+  privateKeySecretRef: letsencrypt-prod
